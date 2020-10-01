@@ -14,7 +14,14 @@ class ProjectList extends React.Component {
 	};
 
 	componentDidMount() { // ajax here
-		axios.get('/projects/get')
+		axios.get('https://api.abex.dev/projects/get',{
+			headers: {
+				'Access-Control-Allow-Origin':'*',
+			},
+			proxy: {
+				host: 'localhost',
+				port: 3000
+			}})
 			.then(res => {
 				if(res.data[0].length != 0) {
 					let cards = [];
