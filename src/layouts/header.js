@@ -4,7 +4,7 @@ import './header.css';
 class Header extends React.Component {
 	render () {
 		return (
-			<p id="header-title">The Beauty of Empty Space</p>
+			<p id="header-title">Abex.dev</p>
 		);
 	};
 }
