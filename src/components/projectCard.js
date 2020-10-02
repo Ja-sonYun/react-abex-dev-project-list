@@ -9,14 +9,20 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
 import Grid from '@material-ui/core/Grid';
 import './projectCard.css';
+import axios from 'axios';
 
 class ProjectCard extends React.Component {
-	constructor() {
-		super();
+	constructor(props) {
+		super(props);
 		this.state = {
 			expanded: false,
+			todos: [],
 		};
 		this.toggleExpandSection = this.toggleExpandSection.bind(this);
 	}
@@ -25,13 +31,30 @@ class ProjectCard extends React.Component {
 		console.log(this.props.data);
 	}
 
+	componentDidUpdate() {
+		if(this.state.expanded && this.state.todos.length == 0) {
+			axios.get('https://api.abex.dev/projects/todos?ID=' + this.props.data.project_id).then(res => {
+				if(res.data[0] != undefined && res.data[0].length != 0) {
+					let todos = [];
+					for(let i in res.data[0]) {
+						todos.push(<FormControlLabel value="start" checked={res.data[0][i].status?true:false} disabled control={<Checkbox color="primary"/>} label={res.data[0][i].title} labelPlacement="start" key={i+'todo'}/>);
+					}
+					this.setState({ todos: todos });
+				} else {
+					this.setState({ todos: [<p key="nf">not found</p>] })
+				}
+			})
+
+		}
+	}
+
 	toggleExpandSection() {
 		this.setState({ expanded: !this.state.expanded });
 	}
 
 	render () {
 		return (
-			<Grid id="project" item xs={6}>
+			<Grid id="project" item xs={12}>
 				<Card elevation={3}>
 					<CardHeader action={
 						<Button size="small" color={this.props.data.status.includes("Done") ? "primary" : "secondary"}>{this.props.data.status}</Button>
@@ -60,7 +83,9 @@ class ProjectCard extends React.Component {
 					</CardActions>
 					<Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
 						<CardContent>
-							Todo here
+							<FormControl>
+								{this.state.todos}
+							</FormControl>
 						</CardContent>
 					</Collapse>
 				</Card>

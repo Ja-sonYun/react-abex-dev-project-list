@@ -19,14 +19,14 @@ class ProjectList extends React.Component {
 				'Access-Control-Allow-Origin':'*',
 			},
 			proxy: {
-				host: 'localhost',
+				host: 'localhost', // Does it necessary?
 				port: 3000
 			}})
 			.then(res => {
 				if(res.data[0].length != 0) {
 					let cards = [];
 					for(let i in res.data[0]) {
-						cards.push(<ProjectCard data={res.data[0][i]} key={i}/>);
+						cards.push(<ProjectCard data={res.data[0][i]} key={i+'project'}/>);
 					}
 					this.setState({ projectCards: cards });
 				}
